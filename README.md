@@ -18,7 +18,6 @@
 
 https://youtube.com/shorts/ldSyiaUxPXM?si=L3cCaIcT80XphbZf
 
-※人物が映る素材については、プライバシーに配慮して加工しています。
 
 ---
 
