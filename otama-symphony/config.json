@@ -1,0 +1,32 @@
+{
+  "project": { "name": "Otama Symphony" },
+
+  "paths": {
+    "images": {
+      "background": "assets/images/background.jpg",
+      "key": "assets/images/key.png",
+
+      "normal_left": "assets/images/object_left.png",
+      "normal_right": "assets/images/object_right.png",
+      "rare_left": "assets/images/rare_left.png",
+      "rare_right": "assets/images/rare_right.png",
+
+      "hit_effect": "assets/images/effect.png"
+    },
+
+    "sounds": {
+      "bgm": "assets/sounds/bgm.wav",
+      "notes_dir": "assets/sounds/notes",
+      "hit": "assets/sounds/sfx/hit.wav",
+      "rare_hit": "assets/sounds/sfx/rare_hit.wav"
+    },
+
+    "settings_dir": "settings"
+  },
+
+  "audio": {
+    "bgm_volume": 0.5,
+    "notes_volume": 0.9,
+    "sfx_volume": 0.9
+  }
+}
