@@ -19,7 +19,6 @@ from collections import deque
 import cv2
 import numpy as np
 import pygame
-import tkinter as tk
 
 # =========================================================
 # ✅ ノート定義（サウンドロードより前に必要）
@@ -81,6 +80,7 @@ notes_volume = float(CONFIG.get("audio", {}).get("notes_volume", 0.9))
 sfx_volume   = float(CONFIG.get("audio", {}).get("sfx_volume", 0.9))
 bgm_volume   = float(CONFIG.get("audio", {}).get("bgm_volume", 0.5))
 
+
 SOUNDS = {}
 for n in NOTE_ORDER:
     wav_path = os.path.join(NOTES_DIR, f"{n}.wav")
@@ -92,6 +92,8 @@ for n in NOTE_ORDER:
             print(f"⚠ notes load failed: {wav_path} -> {e}")
     else:
         print(f"ℹ️ note missing: {wav_path}")
+        
+
 
 HIT_SFX = pygame.mixer.Sound(HIT_SFX_PATH) if os.path.exists(HIT_SFX_PATH) else None
 RARE_HIT_SFX = pygame.mixer.Sound(RARE_HIT_SFX_PATH) if os.path.exists(RARE_HIT_SFX_PATH) else None
@@ -209,18 +211,14 @@ class EffectFlash:
 
 
 # =========================================================
-# 🖥 Screen size
+# 🖥 Screen size（tkinterは使わない：macでクラッシュしやすい）
+#   config.json に screen を追加して管理する
 # =========================================================
-def get_screen_size():
-    root = tk.Tk()
-    root.withdraw()
-    sw = root.winfo_screenwidth()
-    sh = root.winfo_screenheight()
-    root.destroy()
-    return int(sw), int(sh)
+screen_cfg = CONFIG.get("screen", {})
+screen_w = int(screen_cfg.get("width",  1440))
+screen_h = int(screen_cfg.get("height", 900))
+print(f"🖥 Screen size: {screen_w} x {screen_h} (from config/default)")
 
-screen_w, screen_h = get_screen_size()
-print(f"🖥 Screen size: {screen_w} x {screen_h}")
 
 # =========================================================
 # 🖼 背景・鍵盤画像ロード（役割ベース）
@@ -959,7 +957,12 @@ base, xs_expand, xs_canon, top_y, bottom_y = build_base()
 DEMO_MODE = False
 last_human_time = time.time()
 IDLE_THRESHOLD = 25.0
-DEMO_MAX_OBJECTS = 6
+
+# ✅ performance を config.json から読む（なければデフォルト）
+perf_cfg = CONFIG.get("performance", {})
+MAX_OBJECTS_DEFAULT = int(perf_cfg.get("max_objects", 3))
+DEMO_MAX_OBJECTS    = int(perf_cfg.get("demo_max_objects", 6))
+
 DEMO_RIPPLE_INTERVAL = (2.0, 5.0)
 next_demo_ripple_time = time.time() + random.uniform(*DEMO_RIPPLE_INTERVAL)
 
@@ -970,11 +973,12 @@ smooth1 = deque(maxlen=SMOOTH_N)
 smooth2 = deque(maxlen=SMOOTH_N)
 
 objects = []           # ← “fish” ではなく汎用 object
-MAX_OBJECTS = 3
+MAX_OBJECTS = MAX_OBJECTS_DEFAULT
+
 
 ripples = []
 effect_flashes = []
-EFFECT_SCALE = 0.20  # ← ここを変えれば全部の大きさが変わる
+EFFECT_SCALE = float(CONFIG.get("effects", {}).get("effect_scale", 0.20))
 
 
 TRIGGER_COOLDOWN = 0.28
@@ -1219,7 +1223,7 @@ while True:
         MAX_OBJECTS = DEMO_MAX_OBJECTS
         base_interval = 0.5
     else:
-        MAX_OBJECTS = 3
+        MAX_OBJECTS = MAX_OBJECTS_DEFAULT
         base_interval = 1.0
 
     now_spawn = time.time()
